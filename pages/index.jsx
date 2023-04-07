@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import Grid from '../components/Grid'
 import axios from 'axios'
-import qs from 'qs'
 import jsonFile from "../raw.json"
 import Dashboard from '../components/Dashboard'
 import { getURL } from 'next/dist/shared/lib/utils'
