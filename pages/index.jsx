@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '../components/Grid'
 import axios from 'axios'
 import jsonFile from "../raw.json"
@@ -104,6 +104,7 @@ export default function Home() {
             console.error(e)
         }
     }
+    const [gameCodeSelected, setGameCodeSelected] = useState([])
     async function spinAutomatic() {
         try {
             let lastSid = sid;
@@ -111,30 +112,32 @@ export default function Home() {
             const lastPattern = [...patterns];
             let pattern = []
             let c = 0;
-            while (true && c < count) {
-                const spin = await spinGame(token, lastSid)
-                if (pattern.length == 0) {
-                    if (spin.dt.si.psid == spin.dt.si.sid) {
-                        pattern.push(spin.dt.si)
-                    }
-                } else {
-                    if (spin.dt.si.psid == spin.dt.si.sid) {
-                        await saveWebHook(pattern, gameCode)
-                        c++;
-                        pattern = []
-                        lastPattern.push(pattern)
-                        setPatterns(lastPattern)
-                        pattern.push(spin.dt.si)
+            let currentIndex = 0;
+            // for (let x = 0; x < gameCodeSelected.length; x++) {
+                while (true && c < count) {
+                    const spin = await spinGame(token, lastSid)
+                    if (pattern.length == 0) {
+                        if (spin.dt.si.psid == spin.dt.si.sid) {
+                            pattern.push(spin.dt.si)
+                        }
                     } else {
-                        pattern.push(spin.dt.si)
+                        if (spin.dt.si.psid == spin.dt.si.sid) {
+                            await saveWebHook(pattern, gameCode)
+                            c++;
+                            pattern = []
+                            lastPattern.push(pattern)
+                            setPatterns(lastPattern)
+                            pattern.push(spin.dt.si)
+                        } else {
+                            pattern.push(spin.dt.si)
+                        }
                     }
+                    setSid(spin.dt.si.sid)
+                    setBalance(spin.dt.si.bl)
+                    setPsid(spin.dt.si.psid)
+                    lastSid = spin.dt.si.sid;
                 }
-                setSid(spin.dt.si.sid)
-                setBalance(spin.dt.si.bl)
-                setPsid(spin.dt.si.psid)
-                lastSid = spin.dt.si.sid;
-
-            }
+            // }
         } catch (error) {
 
         }
@@ -228,17 +231,17 @@ export default function Home() {
             <div className='w-full max-w-5xl mx-auto py-7'>
                 <div className="text-center text-2xl font-bold text-sky-800 mb-3 border-b py-3">โปรแกรมเก็บค่า PGSLOT</div>
                 <div className="grid grid-cols-2 gap-4">
-                    <form onSubmit={handlerSubmit}>
+                    <form onSubmit={handlerSubmit} className='col-span-2'>
                         <div className="flex flex-col gap-3 mb-3">
                             <div className="flex gap-1">
                                 <div className="flex flex-col gap-2 w-2/3">
                                     <label htmlFor="game_code">รหัสเกม</label>
-                                    <select type="text" className='form-input' id='game_code'
-                                        onChange={(e) => setGameCode(e.target.value)}
-                                    >
-                                        <option value="">-- เลือกเกม --</option>
-                                        {gameList.map((i, key) => <option key={key} value={i.code}>{i.name} [{i.code}:{i.rank}]</option>)}
-                                    </select>
+                                    <div className="max-h-96 overflow-y-auto">
+                                        {gameList.map((game, index) => <div className='flex items-center gap-2'>
+                                            <input type="radio" name="game_code" id={game.code} value={game.code} onChange={(e) => setGameCode(e.target.value)} />
+                                            <label htmlFor={game.code}>{game.name} <span className="text-green-500">{game.code}</span> <span className="text-pink-500">[{game.rank}]</span></label>
+                                        </div>)}
+                                    </div>
                                 </div>
                                 <div className="flex flex-col gap-2 w-1/3">
                                     <label htmlFor="feature">ซื้อฟีเจอร์</label>
