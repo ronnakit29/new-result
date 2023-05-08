@@ -114,29 +114,29 @@ export default function Home() {
             let c = 0;
             let currentIndex = 0;
             // for (let x = 0; x < gameCodeSelected.length; x++) {
-                while (true && c < count) {
-                    const spin = await spinGame(token, lastSid)
-                    if (pattern.length == 0) {
-                        if (spin.dt.si.psid == spin.dt.si.sid) {
-                            pattern.push(spin.dt.si)
-                        }
-                    } else {
-                        if (spin.dt.si.psid == spin.dt.si.sid) {
-                            await saveWebHook(pattern, gameCode)
-                            c++;
-                            pattern = []
-                            lastPattern.push(pattern)
-                            setPatterns(lastPattern)
-                            pattern.push(spin.dt.si)
-                        } else {
-                            pattern.push(spin.dt.si)
-                        }
+            while (true && c < count) {
+                const spin = await spinGame(token, lastSid)
+                if (pattern.length == 0) {
+                    if (spin.dt.si.psid == spin.dt.si.sid) {
+                        pattern.push(spin.dt.si)
                     }
-                    setSid(spin.dt.si.sid)
-                    setBalance(spin.dt.si.bl)
-                    setPsid(spin.dt.si.psid)
-                    lastSid = spin.dt.si.sid;
+                } else {
+                    if (spin.dt.si.psid == spin.dt.si.sid) {
+                        await saveWebHook(pattern, gameCode)
+                        c++;
+                        pattern = []
+                        lastPattern.push(pattern)
+                        setPatterns(lastPattern)
+                        pattern.push(spin.dt.si)
+                    } else {
+                        pattern.push(spin.dt.si)
+                    }
                 }
+                setSid(spin.dt.si.sid)
+                setBalance(spin.dt.si.bl)
+                setPsid(spin.dt.si.psid)
+                lastSid = spin.dt.si.sid;
+            }
             // }
         } catch (error) {
 
@@ -231,7 +231,7 @@ export default function Home() {
             <div className='w-full max-w-5xl mx-auto py-7'>
                 <div className="text-center text-2xl font-bold text-sky-800 mb-3 border-b py-3">โปรแกรมเก็บค่า PGSLOT</div>
                 <div className="grid grid-cols-2 gap-4">
-                    <form onSubmit={handlerSubmit} className='col-span-2'>
+                    <form onSubmit={handlerSubmit} className='col-span-1'>
                         <div className="flex flex-col gap-3 mb-3">
                             <div className="flex gap-1">
                                 <div className="flex flex-col gap-2 w-2/3">
@@ -318,7 +318,7 @@ export default function Home() {
                             <h1 className="text-xl py-2 font-bold">สรุป</h1>
                             {patterns.length < 1 && <p>- ยังไม่มีการบันทึก -</p>}
                             {patterns.map((i, key) => <div key={key} >
-                                - Flow Item : {i.length} รูปแบบ, ชนะทั้งหมด : {i[i.length - 1].aw}, เข้าฟรีสปิน : {i[i.length - 1].fs ? "ใช่" : "ไม่ใช่"}
+                                - Flow Item : {i.length} รูปแบบ, ชนะทั้งหมด : {i[i.length - 1].aw}, เข้าฟรีสปิน : {i[i.length - 1].fs ? "ใช่ / ผลชนะ => " + i[i.length - 1].fs.aw : "ไม่ใช่"}
                             </div>)}
                         </div>
 
