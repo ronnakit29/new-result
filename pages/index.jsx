@@ -283,7 +283,7 @@ export default function Home() {
                                     onChange={(e) => setProxyServer(e.target.value)}
                                 >
                                     <option value="">-- เลือก Proxy Server --</option>
-                                    {proxyServers.map((i, key) => <option key={key} value={i}>{i}</option>)}
+                                    {proxyServers.map((i, key) => <option key={key} value={i}>{key + 1} | {i}</option>)}
                                 </select>
                             </div>
                             {/* <div>
