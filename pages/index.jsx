@@ -128,8 +128,11 @@ export default function Home() {
     async function handlerSubmit(e) {
         e.preventDefault()
         try {
-            const gameUrl = await getGameUrl(username, gameCode)
-            setUrl(gameUrl)
+            let gameUrl = url;
+            if (!gameUrl) {
+                gameUrl = await getGameUrl(username, gameCode)
+                setUrl(gameUrl)
+            }
             const urlDataUrl = urlData(gameUrl)
             const verify = await verifySession(urlDataUrl.params.get('ot'), urlDataUrl.gameId, urlDataUrl.params.get('btt'), urlDataUrl.params.get('ops'))
             const gameName = urlData(verify.data.dt.geu).gameName;
@@ -341,7 +344,13 @@ export default function Home() {
                                     </select>
                                 </div>
                             </div>
-
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="username">URL เข้าเกม</label>
+                                <input type="text" className='form-input' id='username'
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                />
+                            </div>
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="count">เก็บค่า (ครั้ง)</label>
                                 <input type="number" step={1} className='form-input' id='count'
